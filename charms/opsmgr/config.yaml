@@ -1,0 +1,24 @@
+options:
+  git-repository:
+    default: git://github.com/open-power-ref-design-toolkit/opsmgr.git
+    type: string
+    description: Repository to install from.
+  git-branch:
+    default: master
+    type: string
+    description: Branch in the repository to use.
+  opsmgr-plugins:
+    default: |
+      - .
+      - horizon
+      - plugins/devices/powernode
+      - plugins/devices/mellanox
+      - plugins/devices/lenovo
+      - plugins/devices/rhel
+      - plugins/devices/ubuntu
+      - plugins/operations/elk
+      - plugins/operations/nagios
+    type: string
+    description: |
+      YAML dictionary listing the python packages
+      that should be installed from the git repo

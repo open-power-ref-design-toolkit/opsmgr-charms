@@ -1,0 +1,13 @@
+{
+      "title": "Log Management Dashboard - OpenStack API Summary",
+      "hits": 0,
+      "description": "",
+      "panelsJSON": "[{\"col\":3,\"id\":\"API-STATUS\",\"panelIndex\":6,\"row\":1,\"size_x\":4,\"size_y\":2,\"type\":\"visualization\"},{\"col\":3,\"id\":\"API-ERROR-DISTRIBUTION\",\"panelIndex\":7,\"row\":3,\"size_x\":4,\"size_y\":2,\"type\":\"visualization\"},{\"col\":1,\"id\":\"ERROR-REQUEST\",\"panelIndex\":9,\"row\":3,\"size_x\":2,\"size_y\":2,\"type\":\"visualization\"},{\"col\":1,\"id\":\"TOTAL-REQUEST\",\"panelIndex\":14,\"row\":1,\"size_x\":2,\"size_y\":2,\"type\":\"visualization\"},{\"col\":7,\"id\":\"REQUEST-DISTRIBUTION\",\"panelIndex\":15,\"row\":1,\"size_x\":4,\"size_y\":2,\"type\":\"visualization\"},{\"col\":7,\"id\":\"ERROR-HTTP-METHODS\",\"panelIndex\":16,\"row\":3,\"size_x\":4,\"size_y\":2,\"type\":\"visualization\"},{\"col\":4,\"id\":\"OPENSTACK-LOG-LEVEL-SEVERITY\",\"panelIndex\":20,\"row\":5,\"size_x\":3,\"size_y\":2,\"type\":\"visualization\"},{\"col\":1,\"id\":\"TOP-5-EVENT-SOURCES\",\"panelIndex\":21,\"row\":5,\"size_x\":3,\"size_y\":2,\"type\":\"visualization\"}]",
+      "optionsJSON": "{\"darkTheme\":false}",
+      "uiStateJSON": "{\"P-15\":{\"spy\":{\"mode\":{\"fill\":false,\"name\":null}}},\"P-7\":{\"vis\":{\"legendOpen\":false}},\"P-14\":{\"vis\":{\"defaultColors\":{\"0 - 100\":\"rgb(0,104,55)\"}}},\"P-9\":{\"vis\":{\"defaultColors\":{\"0 - 100\":\"rgb(0,104,55)\"}}}}",
+      "version": 1,
+      "timeRestore": false,
+      "kibanaSavedObjectMeta": {
+        "searchSourceJSON": "{\"filter\":[{\"query\":{\"query_string\":{\"analyze_wildcard\":true,\"query\":\"*\"}}}],\"highlightAll\":true,\"version\":true}"
+      }
+    }

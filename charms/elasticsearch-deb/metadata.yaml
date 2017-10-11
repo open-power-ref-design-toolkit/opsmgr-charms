@@ -1,0 +1,29 @@
+name: elasticsearch-deb
+summary: Installs elasticsearch via a deb package install
+description: |
+  Distributed RESTful search and analytics
+  Read more at http://www.elasticsearch.org
+  This charm is useful when a version of elasticsearch is not available
+  for your platform when using apt install (ppc64el for example)
+tags:
+  - logging
+  - data-processing
+maintainers:
+  - William Irons <wdirons@us.ibm.com>
+subordinate: false
+peers:
+  peer:
+    interface: http
+provides:
+  client:
+    interface: elasticsearch
+  dashboard:
+    interface: dashboards
+    scope: container
+  logs:
+    interface: logs
+  nrpe-external-master:
+    interface: nrpe-external-master
+    scope: container
+series:
+  - xenial

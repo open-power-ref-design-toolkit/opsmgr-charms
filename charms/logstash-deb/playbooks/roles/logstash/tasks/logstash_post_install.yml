@@ -1,0 +1,45 @@
+- name: Logstash Tuning
+  template:
+    src: "{{ item }}"
+    dest: "/etc/default/{{ item }}"
+    owner: "root"
+    group: "root"
+  notify: Restart Logstash
+  with_items:
+    - logstash
+  tags:
+    - config_changed
+
+- name: Enable Logstash Plugins
+  command: "/usr/share/logstash/bin/logstash-plugin install {{ item }}"
+  with_items: "{{ logstash_plugins }}"
+  register: plugin_install
+  until: plugin_install|success
+  retries: 5
+  delay: 2
+  notify: Restart Logstash
+  tags:
+    - install
+
+- name: Copy input file
+  template:
+     src: 000-input.conf
+     dest: "/etc/logstash/conf.d/000-input.conf"
+     owner: "root"
+     group: "root"
+  notify: Restart Logstash
+  tags:
+    - config_changed
+
+- name: Copy output file
+  template:
+     src: 999-output.conf
+     dest: "/etc/logstash/conf.d/999-output.conf"
+     owner: "root"
+     group: "root"
+  notify: Restart Logstash
+  when:
+    - relations['elasticsearch'] is defined
+  tags:
+    - config_changed
+

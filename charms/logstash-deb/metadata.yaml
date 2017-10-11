@@ -1,0 +1,28 @@
+name: logstash-deb
+summary: Installs logstash via a deb package install
+description: |
+  Logstash is a data pipeline that helps you process logs and other event data
+  from a variety of systems. With 200 plugins and counting, Logstash can
+  connect to a variety of sources and stream data at scale to a central
+  analytics system.
+  This charm is useful when a version of logstash is not available
+  for your platform when using apt install (ppc64el for example)
+tags:
+  - logging
+  - data-processing
+maintainers:
+  - William Irons <wdirons@us.ibm.com>
+subordinate: false
+provides:
+  client:
+    interface: logstash-client
+  beat:
+    interface: elastic-beats
+  nrpe-external-master:
+    interface: nrpe-external-master
+    scope: container
+requires:
+  elasticsearch:
+    interface: elasticsearch
+series:
+  - xenial

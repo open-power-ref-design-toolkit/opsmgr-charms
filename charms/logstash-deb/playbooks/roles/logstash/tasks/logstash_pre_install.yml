@@ -1,0 +1,11 @@
+- name: installs prereq packages
+  package:
+    name: "{{ item }}"
+    state: present
+  with_items: "{{ logstash_pre_packages }}"
+  register: install_prereq
+  until: install_prereq|success
+  retries: 5
+  delay: 2
+  tags:
+    - install

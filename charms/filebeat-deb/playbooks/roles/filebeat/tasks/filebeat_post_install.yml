@@ -1,0 +1,30 @@
+- name: Deploy Filebeat Configuration Files
+  template:
+    src: "{{ item.src }}"
+    dest: "{{ item.dest }}"
+  with_items: "{{ filebeat_configuration_files }}"
+  notify: "Restart Filebeat"
+  when:
+    - beat__private_address is defined
+    - beat__logstash_port is defined
+  tags:
+    - config_changed
+
+- name: Create the conf directory
+  file:
+    path: "{{ filebeat_config_directory }}"
+    state: directory
+  tags:
+    - config_changed
+
+- name: Flush handlers
+  meta: flush_handlers
+
+- name: Ensuring filebeat is started on boot
+  service:
+    name: filebeat
+    enabled: yes
+    state: started
+  tags:
+    - config_changed
+

@@ -1,0 +1,16 @@
+name: logstash-config-openstack
+summary: Logstash configuration for openstack logs
+description: |
+  To be installed where the logstash charm is already installed.
+  This will configure logstash on how to parse logs comming from OpenStack.
+tags:
+  - logging
+maintainers:
+  - William Irons <wdirons@us.ibm.com>
+subordinate: True
+requires:
+  logstash:
+    interface: logstash-client
+    scope: container
+series:
+  - xenial

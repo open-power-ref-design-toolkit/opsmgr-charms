@@ -1,0 +1,21 @@
+- hosts: localhost
+  vars_files:
+    - /etc/ansible/host_vars/localhost
+  roles:
+    - kibana
+
+  tasks:
+    - name: Start Kibana
+      service:
+        name: kibana
+        state: started
+        enabled: yes
+      tags:
+        - start
+    - name: Stop & Disable Kibana
+      service:
+        name: kibana
+        state: stopped
+        enabled: no
+      tags:
+        - stop

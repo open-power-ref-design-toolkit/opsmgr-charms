@@ -1,0 +1,32 @@
+deb_package_architecture: ppc64el
+
+build_prereq_packages:
+  - git
+  - build-essential
+
+build_dir: /tmp/metricbeat_build
+
+go_download: https://storage.googleapis.com/golang/go1.7.6.linux-{{ ansible_architecture }}.tar.gz
+go_root: "{{ build_dir }}/go"
+go_path: "{{ build_dir }}/go_path"
+
+beats_path: "{{ go_path}}/src/github.com/elastic/beats"
+beats_url: https://github.com/elastic/beats.git
+beats_tag: v5.6.1
+metricbeat_dir: "{{ beats_path }}/metricbeat"
+
+go_daemon_dir: "{{ build_dir }}/go_daemon"
+go_daemon_url: https://github.com/tsg/go-daemon.git
+go_daemon_build_cmd: "cc god.c -m64 -o god-linux-{{ ansible_architecture }} -lpthread -static"
+
+package_path_host: "/tmp"
+
+deb_package_amd64: metricbeat-5.6.2-amd64.deb
+deb_package_target_platform: metricbeat-5.6.2-{{ ansible_architecture }}.deb
+deb_download_path: https://artifacts.elastic.co/downloads/beats/metricbeat
+deb_download_checksum: "sha512:c360c28849577c800c0040cc5bfd83f504e21e82c831a28af8cd858f99f2addacaf19b9da2bd1397520f8c544331ee249b95a0e8e4e252978c196a6e45cd08c4"
+deb_working_dir: "{{ build_dir }}/debworkingdir"
+deb_binary_path: "{{ deb_working_dir }}/usr/share/metricbeat/bin"
+deb_control_file: "{{ deb_working_dir }}/DEBIAN/control"
+deb_md5sums_file: "{{ deb_working_dir }}/DEBIAN/md5sums"
+

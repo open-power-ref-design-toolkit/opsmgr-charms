@@ -1,0 +1,29 @@
+- name: Deploy Metricbeat Configuration Files
+  template:
+    src: "{{ item.src }}"
+    dest: "{{ item.dest }}"
+  with_items: "{{ metricbeat_configuration_files }}"
+  notify: "Restart Metricbeat"
+  when:
+    - unit_private_address is defined
+  tags:
+    - config_changed
+
+- name: Create the conf directory
+  file:
+    path: "{{ metricbeat_config_directory }}"
+    state: directory
+  tags:
+    - config_changed
+
+- name: Flush handlers
+  meta: flush_handlers
+
+- name: Ensuring metricbeat is started on boot
+  service:
+    name: metricbeat
+    enabled: yes
+    state: started
+  tags:
+    - config_changed
+

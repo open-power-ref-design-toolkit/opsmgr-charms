@@ -1,0 +1,88 @@
+- name: installs prereq packages
+  package: name={{ item }} state=present
+  with_items: "{{ build_prereq_packages }}"
+  tags:
+    - install
+
+- name: Make temp directory for build
+  file:
+    path: "{{ build_dir }}"
+    state: directory
+  tags:
+    - install
+
+- name: Download go and unpack it
+  unarchive:
+    src: "{{ go_download }}"
+    dest: "{{ build_dir }}"
+    creates: "{{ go_root }}"
+    copy: no
+  tags:
+    - install
+
+- name: Make gopath
+  file:
+    path: "{{ go_path }}"
+    state: directory
+  tags:
+    - install
+
+- name: Make beats_path
+  file:
+    path: "{{ beats_path }}"
+    state: directory
+  tags:
+    - install
+
+- name: git clone beats
+  git:
+    repo: "{{ beats_url }}"
+    dest: "{{ beats_path }}"
+    version: "{{ beats_tag }}"
+  tags:
+    - install
+
+- name: Build metricbeat
+  make:
+    chdir: "{{ metricbeat_dir }}"
+  environment:
+    GOROOT: "{{ go_root }}"
+    GOPATH: "{{ go_path }}"
+    PATH: "{{ go_root }}/bin:{{ ansible_env.PATH }}"
+  tags:
+    - install
+
+- name: Make go_daemon_dir
+  file:
+    path: "{{ go_daemon_dir }}"
+    state: directory
+  tags:
+    - install
+
+- name: git clone go daemon
+  git:
+    repo: "{{ go_daemon_url }}"
+    dest: "{{ go_daemon_dir }}"
+  tags:
+    - install
+
+- name: Build go daemon
+  command: "{{ go_daemon_build_cmd }}"
+  args:
+    chdir: "{{ go_daemon_dir }}"
+    creates: "{{ go_daemon_dir }}/god-linux-{{ ansible_architecture }}"
+  tags:
+    - install
+
+- name: Package the result as a deb package
+  include: deb_package.yml
+  tags:
+    - install
+
+- name: Remove build_dir
+  file:
+    path: "{{ build_dir }}"
+    state: absent
+  tags:
+    - install
+

@@ -1,0 +1,46 @@
+- name: Download deb/rpm package
+  get_url:
+    url: "{{ item.url }}/{{ item.file }}"
+    dest: "/tmp/{{ item.file }}"
+    checksum: "{{ item.checksum }}"
+  with_items: "{{ logstash_packages }}"
+  register: logstash_download
+  until: logstash_download | success
+  retries: 5
+  delay: 2
+  tags:
+    - install
+
+- name: install logstash from deb
+  apt:
+    deb: "/tmp/{{ item.file }}"
+    state: present
+  with_items: "{{ logstash_packages }}"
+  when: ansible_os_family == "Debian"
+  register: install_deb
+  until: install_deb|success
+  retries: 5
+  delay: 2
+  tags:
+    - install
+
+- name: remove deb/rpm file
+  file:
+    path: "/tmp/{{ item.file }}"
+    state: absent
+  with_items: "{{ logstash_packages }}"
+  tags:
+    - install
+
+- name: Enable Logstash Service
+  service:
+    name: logstash
+    enabled: yes
+  tags:
+    - install
+
+- name: Set Application version
+  shell: "application-version-set {{ logstash_version }}"
+  tags:
+    - install
+

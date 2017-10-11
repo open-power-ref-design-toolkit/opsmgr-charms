@@ -1,0 +1,54 @@
+---
+- name: Deploy Kibana configuration files
+  template:
+    src: "{{ item }}"
+    dest: "{{ config_dir }}/{{ item }}"
+    owner: "root"
+    group: "root"
+  with_items:
+    - kibana.yml
+  notify: Restart Kibana
+  tags:
+    - config_changed
+
+- name: Deploy Kibana service configuration file
+  template:
+    src: "{{ item }}"
+    dest: "/etc/default/{{ item }}"
+    owner: "root"
+    group: "root"
+  with_items:
+    - kibana
+  notify: Restart Kibana
+  tags:
+    - config_changed
+
+- name: Restart Kibana before proceeding
+  meta: flush_handlers
+  tags:
+    - config_changed
+
+- name: Wait for Kibana port
+  wait_for:
+    host: "127.0.0.1"
+    port: "{{ kibana_app_port }}"
+  tags:
+    - config_changed
+
+- name: Guessing current kibana version
+  shell: cat package.json | python -c 'import json,sys;obj=json.load(sys.stdin);print obj["version"];'
+  args:
+    chdir: "{{ kibana_root }}"
+  register: kibana_version
+  tags:
+    - config_changed
+
+- name: Make logstash the default index
+  uri:
+    method: "PUT"
+    url: "http://{{ rest__private_address }}:{{ rest__elasticsearch_port }}/.kibana/config/{{ kibana_version.stdout }}"
+    body: '{"defaultIndex" : "logstash-*"}'
+    body_format: "json"
+    status_code: 200,201,409
+  tags:
+    - config_changed

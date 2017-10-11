@@ -1,0 +1,14 @@
+name: elasticsearch-dashboards-metricbeat
+summary: Deploy Metricbeat visualizations and dashboards
+description: |
+tags:
+  - logging
+maintainers:
+  - Matthew Lehning <mlehning@us.ibm.com>
+subordinate: true
+requires:
+  dashboard:
+    interface: dashboards
+    scope: container
+series:
+  - xenial

@@ -1,0 +1,14 @@
+name: elasticsearch-dashboards-ceph
+summary: Deploy Ceph visualizations and dashboards
+description: |
+tags:
+  - logging
+maintainers:
+  - Poorna Thanneeru <poorna@us.ibm.com>
+subordinate: true
+requires:
+  dashboard:
+    interface: dashboards
+    scope: container
+series:
+  - xenial

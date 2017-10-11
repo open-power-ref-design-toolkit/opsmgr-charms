@@ -1,0 +1,6 @@
+[DEFAULT]
+passphrase = {{ random_passphrase }}
+
+[DATABASE]
+connection = mysql+pymysql://{{ db_user }}:{{ db_password }}@{{ db_host }}/{{ db_name }}
+

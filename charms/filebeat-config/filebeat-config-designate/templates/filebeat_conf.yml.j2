@@ -1,0 +1,25 @@
+# JuJu Managed 
+filebeat:
+  prospectors:
+    - paths: {{ paths }}
+      encoding: {{ encoding }}
+{% if tags %}
+      tags: {{ tags }}
+{% endif %}
+{% if multiline_pattern %}
+      multiline:
+        pattern: {{ multiline_pattern }}
+        match: {{ multiline_match }}
+        negate: {{ multiline_negate }}
+        max_lines: {{ multiline_max_lines }}
+        timeout: {{ multiline_timeout }}
+{% endif %}
+{% if exclude_lines %}
+      exclude_lines: {{ exclude_lines }}
+{% endif %}
+{% if include_lines %}
+      include_lines: {{ include_lines }}
+{% endif %}
+{% if exclude_files %}
+      exclude_files: {{ exclude_files }}
+{% endif %}

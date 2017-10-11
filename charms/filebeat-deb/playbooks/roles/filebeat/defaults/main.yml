@@ -1,0 +1,12 @@
+package_path_host: /tmp
+package_path: /tmp/filebeat_install
+package_file: filebeat-{{ filebeat_version }}-{{ ansible_architecture }}.deb
+package_file_amd64: filebeat-{{ filebeat_version }}-amd64.deb
+download_url: https://artifacts.elastic.co/downloads/beats/filebeat
+filebeat_version: 5.6.2
+download_checksum_amd64: "sha512:2b740fc2d30a95212daf062157f39c1ad05a96c5cf3dd1a68c03d0f00bafb37e376351cd8fb0ea70688e827cad0fe77df37ed5dd23ae4161107ee767bed9d71a"
+
+filebeat_configuration_files:
+  - { src: "filebeat_main.yml.j2", dest: "/etc/filebeat/filebeat.yml" }
+
+filebeat_config_directory: /etc/filebeat/conf

@@ -1,0 +1,19 @@
+logstash_plugins:
+  - logstash-input-beats
+
+logstash_pre_packages:
+  - apt-transport-https
+  - wget
+  - curl
+  - rsync
+  - python-pip
+  - ca-certificates
+  - openjdk-8-jre-headless
+
+#for ppc64le and x86 use the deb package to install
+logstash_packages:
+  - { url: "https://artifacts.elastic.co/downloads/logstash",
+      file: "logstash-5.6.2.deb",
+      checksum: "sha512:71fa050f5c2d1a54c54d7ebee466b400088f83af22b2a38b82bf39ab7e8e191005158444cb385b5ddbf76e4f984f59f62b3333b30412ba5cb0d3c43071b6238f" }
+
+logstash_version: 5.6.2

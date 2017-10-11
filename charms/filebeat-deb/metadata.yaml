@@ -1,0 +1,21 @@
+name: filebeat-deb
+summary:  Creates Filebeat deb package needed for filebeat install
+description: 
+  Creates Filebeat deb package which is in turn used 
+  during filebeat install. Also installs filebeat. 
+tags:
+  - monitoring
+maintainers:
+  - Poorna Thanneeru <poorna@us.ibm.com>
+subordinate: True
+requires:
+  beat:
+    interface: elastic-beats
+  logging:
+    interface: logging
+    scope: container
+  general-info:
+    interface: juju-info
+    scope: container
+series:
+  - xenial

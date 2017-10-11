@@ -1,0 +1,16 @@
+package_path_host: /tmp
+package_path: /tmp/metricbeat_install
+package_file: metricbeat-{{ metricbeat_version }}-{{ ansible_architecture }}.deb
+package_file_amd64: metricbeat-{{ metricbeat_version }}-amd64.deb
+download_url: https://artifacts.elastic.co/downloads/beats/metricbeat
+metricbeat_version: 5.6.2
+download_checksum_amd64: "sha512:c360c28849577c800c0040cc5bfd83f504e21e82c831a28af8cd858f99f2addacaf19b9da2bd1397520f8c544331ee249b95a0e8e4e252978c196a6e45cd08c4"
+
+metricbeat_configuration_files:
+  - { src: "metricbeat_main.yml.j2", dest: "/etc/metricbeat/metricbeat.yml" }
+
+metricbeat_config_directory: /etc/metricbeat
+
+metricbeat_elasticsearch_port: "{{ elasticsearch__elasticsearch_port |default(9200) }}"
+
+metricbeat_elasticsearch_hosts: "{{ elasticsearch__private_address }}:{{ metricbeat_elasticsearch_port }}"

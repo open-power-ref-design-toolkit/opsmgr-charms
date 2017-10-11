@@ -1,0 +1,15 @@
+name: metricbeat-deb
+summary:  Creates Metricbeat deb package needed for metricbeat install
+description: 
+  Creates Metricbeat deb package which is in turn used 
+  during metricbeat install. Also installs metricbeat. 
+tags:
+  - monitoring
+maintainers:
+  - William Irons <wdirons@us.ibm.com>
+subordinate: False
+requires:
+  elasticsearch:
+    interface: elasticsearch
+series:
+  - xenial

@@ -1,0 +1,9 @@
+options:
+  metricbeat_period:
+    type: string
+    default: 1m
+    description: "Default metricbeat period value"
+  metricbeat_process_period:
+    type: string
+    default: 5m
+    description: "Default metricbeat process period value"

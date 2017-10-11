@@ -1,0 +1,22 @@
+name: dbaas-ui-dashboard
+summary: Web dashboard for DBaaS (Database as a service)
+description: |
+  The DBaaS_UI dashboard provides the web interface in the Openstack
+  dashboard for the database services.
+tags:
+  - openstack
+series:
+  - xenial
+maintainers:
+  - William Irons <wdirons@us.ibm.com>
+subordinate: true
+requires:
+  openstack-dashboard:
+    interface: juju-info
+    scope: container
+  dashboard-plugin:
+    interface: dashboard-plugin
+    scope: container
+  trove-plugin:
+    interface: trove-plugin
+    scoped: container

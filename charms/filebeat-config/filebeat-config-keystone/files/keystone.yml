@@ -1,0 +1,18 @@
+# JuJu Managed
+filebeat:
+  prospectors:
+    - paths: ['/var/log/keystone/keystone.log']
+      encoding: 'utf-8'
+      tags: ['keystone', 'openstack', 'keystone-log']
+      multiline:
+        pattern: '^\('
+        match: 'after'
+        negate: 'True'
+        max_lines: '500'
+        timeout: '5s'
+    - paths: ['/var/log/apache2/keystone_access.log']
+      encoding: 'utf-8'
+      tags: ['keystone', 'openstack', 'apache-access']
+    - paths: ['/var/log/apache2/error.log']
+      encoding: 'utf-8'
+      tags: ['keystone', 'openstack', 'apache-error']

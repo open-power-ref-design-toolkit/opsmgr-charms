@@ -1,0 +1,23 @@
+name: trove-dashboard
+summary: Web dashboard for DBaaS (Database as a service)
+description: |
+  The Trove dashboard provides the web interface in the Openstack
+  dashboard for the database services.
+tags:
+  - openstack
+series:
+  - xenial
+maintainers:
+  - William Irons <wdirons@us.ibm.com>
+subordinate: true 
+provides:
+  trove-plugin:
+    interface: trove-plugin
+    scope: container
+requires:
+  openstack-dashboard:
+    interface: juju-info
+    scope: container
+  dashboard-plugin:
+    interface: dashboard-plugin
+    scope: container

@@ -1,0 +1,42 @@
+- name: installs prereq packages
+  package:
+    name: "{{ item }}"
+    state: present
+  with_items: "{{ elasticsearch_pre_packages }}"
+  register: install_prereq
+  until: install_prereq|success
+  retries: 5
+  delay: 2
+  tags:
+    - install
+
+- name: Create the ElasticSearch System Group
+  group:
+    name: "{{ elasticsearch_system_group }}"
+    state: "present"
+    system: "yes"
+  when: elasticsearch_system_group is defined
+  tags:
+    - install
+
+- name: Create the ElasticSearch System User
+  user:
+    name: "{{ elasticsearch_system_user }}"
+    shell: "/bin/bash"
+    group: "{{ elasticsearch_system_group }}"
+    groups: adm
+    home: "/usr/share/elasticsearch"
+    system: "yes"
+    createhome: "no"
+  when: elasticsearch_system_group is defined and elasticsearch_system_user is defined
+  tags:
+    - install
+
+- name: Upgrade pip to the latest version
+  command: pip install --upgrade pip
+  register: pip_upgrade
+  until: pip_upgrade|success
+  retries: 5
+  delay: 2
+  tags:
+    - install

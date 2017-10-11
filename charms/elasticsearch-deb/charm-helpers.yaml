@@ -1,0 +1,10 @@
+destination: hooks/charmhelpers
+branch: lp:charm-helpers
+include:
+    - core
+    - osplatform
+    - fetch
+    - contrib.ansible|inc=*
+    - contrib.python|inc=*
+    - contrib.templating.contexts
+    - contrib.charmsupport.nrpe

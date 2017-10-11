@@ -1,0 +1,21 @@
+name: opsmgr
+summary: opsmgr command line and horizon dashboard
+description: |
+  opsmgr command line and horizon dashboard for inventory
+  management of a cluster.
+tags:
+  - monitoring
+series:
+  - xenial
+maintainers:
+  - William Irons <wdirons@us.ibm.com>
+subordinate: true 
+requires:
+  openstack-dashboard:
+    interface: juju-info
+    scope: container
+  dashboard-plugin:
+    interface: dashboard-plugin
+    scope: container
+  mysql:
+    interface: mysql

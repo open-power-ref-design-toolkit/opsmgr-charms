@@ -1,0 +1,147 @@
+---
+
+# Kibana is not supported on all platforms nodejs is supported on
+# Kibana is written in nodejs, so we will download the x86 tar.gz
+# kibana image and replace the nodejs binary with the binary
+# for the platform we are running on
+
+- name: Create the Kibana System User
+  user:
+    name: "kibana"
+    shell: "/bin/bash"
+    system: "yes"
+    createhome: "no"
+  tags:
+    - install
+
+- name: create temporary directory for install
+  file:
+    path: "{{ temp_install_directory }}"
+    state: directory
+  tags:
+    - install
+
+- name: Download kibana
+  get_url:
+    url: "{{ kibana_package.url }}/{{ kibana_package.file }}"
+    dest: "/tmp/{{ kibana_package.file }}"
+    checksum: "{{ kibana_package.checksum }}"
+  register: kibana_download
+  until: kibana_download | success
+  retries: 5
+  delay: 2
+  tags:
+    - install
+
+- name: Download nodejs
+  get_url:
+    url: "{{ nodejs_package.url }}/{{ nodejs_package.file }}"
+    dest: "/tmp/{{ nodejs_package.file }}"
+  when: ansible_architecture != 'x86_64'
+  register: nodejs_download
+  until: nodejs_download | success
+  retries: 5
+  delay: 2
+  tags:
+    - install
+
+- name: Extract kibana
+  unarchive:
+    src: "/tmp/{{ kibana_package.file }}"
+    dest: "{{ temp_install_directory }}"
+    creates: "{{ temp_install_directory }}/{{ kibana_directory }}"
+    copy: no
+  tags:
+    - install
+
+- name: Extract nodejs
+  unarchive:
+    src: "/tmp/{{ nodejs_package.file }}"
+    dest: "{{ temp_install_directory }}"
+    creates: "{{ temp_install_directory }}/{{ nodejs_directory }}"
+    copy: no
+  when: ansible_architecture != 'x86_64'
+  tags:
+    - install
+
+# 2 step hack to make sure when kibana_root is for example:
+# /opt/kibana, that /opt gets created but /opt/kibana does not
+- name: Create the full path of kibana root
+  file:
+    path: "{{ kibana_root }}"
+    state: directory
+  tags:
+    - install
+
+- name: Remove the kibana directory so we can copy the extracted directory
+  file:
+    path: "{{ kibana_root }}"
+    state: absent
+  tags:
+    - install
+
+- name: move the kibana directory to kibana_root
+  command: mv "{{ temp_install_directory }}/{{ kibana_directory }}" "{{ kibana_root }}"
+  args:
+    creates: "{{ kibana_root }}"
+  tags:
+    - install
+
+- name: move the nodejs binary to kibana_root/node/bin
+  copy:
+    src: "{{ temp_install_directory }}/{{ nodejs_directory }}/bin/node"
+    dest: "{{ kibana_root }}/node/bin"
+    remote_src: True
+  when: ansible_architecture != 'x86_64'
+  tags:
+    - install
+
+- name: Set permssions on kibana_root
+  file:
+    path: "{{ kibana_root }}"
+    state: "directory"
+    recurse: "yes"
+    owner: "{{ kibana_service_user }}"
+    group: "{{ kibana_service_group }}"
+  tags:
+    - install
+
+- name: delete temporary directory
+  file:
+    path: "{{ temp_install_directory }}"
+    state: absent
+  tags:
+    - install
+
+- name: Lay down kibana service file
+  template:
+    src: "kibana.service"
+    dest: "/etc/init.d/kibana"
+    mode: 0755
+  tags:
+    - install
+
+- name: Enable Kibana Service
+  service:
+    name: kibana
+    enabled: yes
+  tags:
+    - install
+
+- name: Install pip packages
+  pip:
+    name: "{{ item }}"
+    state: latest
+    extra_args: "{{ pip_install_options |default('') }}"
+  register: install_pip_packages
+  until: install_pip_packages |success
+  retries: 5
+  delay: 2
+  with_items: "{{ kibana_pip_packages }}"
+  tags:
+    - install
+
+- name: Set Application version
+  shell: "application-version-set {{ kibana_version }}"
+  tags:
+    - install

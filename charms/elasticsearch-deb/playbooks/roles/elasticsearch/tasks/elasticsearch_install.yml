@@ -1,0 +1,58 @@
+- name: Download deb/rpm package
+  get_url:
+    url: "{{ item.url }}/{{ item.file }}"
+    dest: "/tmp/{{ item.file }}"
+    checksum: "{{ item.checksum }}"
+  with_items: "{{ elasticsearch_packages }}"
+  register: es_download
+  until: es_download | success
+  retries: 5
+  delay: 2
+  tags:
+    - install
+
+- name: install logstash from deb
+  apt:
+    deb: "/tmp/{{ item.file }}"
+    state: present
+  with_items: "{{ elasticsearch_packages }}"
+  when: ansible_os_family == "Debian"
+  register: install_deb
+  until: install_deb|success
+  retries: 5
+  delay: 2
+  tags:
+    - install
+
+- name: remove deb/rpm file
+  file:
+    path: "/tmp/{{ item.file }}"
+    state: absent
+  with_items: "{{ elasticsearch_packages }}"
+  tags:
+    - install
+
+- name: Install pip packages
+  pip:
+    name: "{{ item }}"
+    state: present
+    extra_args: "{{ pip_install_options | default('') }}"
+  register: install_pip_packages
+  until: install_pip_packages|success
+  retries: 5
+  delay: 2
+  with_items: "{{ elasticsearch_pip_packages }}"
+  tags:
+    - install
+
+- name: Enable ElasticSearch Service
+  service:
+    name: elasticsearch
+    enabled: yes
+  tags:
+    - install
+
+- name: Set Application version
+  shell: "application-version-set {{ elasticsearch_version }}"
+  tags:
+    - install

@@ -1,0 +1,27 @@
+---
+- name: Localhost haproxy for multiple elasticsearch servers
+  blockinfile:
+    dest: /etc/haproxy/haproxy.cfg
+    marker: "#  {mark} kibana localhost haproxy (juju/ansible managed)"
+    block: |
+      frontend elasticsearch-front
+        bind 127.0.0.1:{{ frontend_port }}
+        mode http
+        option httplog
+        option http-server-close
+        default_backend elasticsearch-back
+
+      backend elasticsearch-back
+        mode http
+        option forwardfor
+        option httpchk
+        option httplog
+        balance source
+      {% for relation in relations['rest'] %}
+      {% if relation['elasticsearch_port'] is defined %}
+        server {{ relation['private-address'] }} {{relation['private-address'] }}:{{ relation['elasticsearch_port'] }} check port {{ relation['elasticsearch_port'] }} inter 10s fall 1 rise 1
+      {% endif %}
+      {% endfor %}
+  notify: Restart HAProxy
+  tags:
+    - config_changed

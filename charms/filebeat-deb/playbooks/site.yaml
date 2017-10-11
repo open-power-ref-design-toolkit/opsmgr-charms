@@ -1,0 +1,21 @@
+- hosts: localhost
+  vars_files:
+    - /etc/ansible/host_vars/localhost
+  roles:
+    - { role: filebeat_build, when: ansible_architecture == 'ppc64le' }
+    - { role: filebeat }
+
+  tasks:
+    - name: Start Filebeat
+      service: 
+        name: filebeat 
+        state: started
+      tags:
+        - start
+    - name: Stop Filebeat
+      service: 
+        name: filebeat 
+        state: stopped
+      tags:
+        - stop
+

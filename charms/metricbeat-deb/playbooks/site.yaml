@@ -1,0 +1,21 @@
+- hosts: localhost
+  vars_files:
+    - /etc/ansible/host_vars/localhost
+  roles:
+    - { role: metricbeat_build, when: ansible_architecture == 'ppc64le' }
+    - { role: metricbeat }
+
+  tasks:
+    - name: Start Metricbeat
+      service: 
+        name: metricbeat 
+        state: started
+      tags:
+        - start
+    - name: Stop Metricbeat
+      service: 
+        name: metricbeat 
+        state: stopped
+      tags:
+        - stop
+

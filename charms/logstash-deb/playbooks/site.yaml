@@ -1,0 +1,20 @@
+- hosts: localhost
+  vars_files:
+    - /etc/ansible/host_vars/localhost
+  roles:
+    - logstash
+
+  tasks:
+    - name: Start Logstash
+      service:
+        name: logstash
+        state: started
+      tags:
+        - start
+    - name: Stop & Disable Logstash
+      service:
+        name: logstash
+        state: stopped
+        enabled: no
+      tags:
+        - stop

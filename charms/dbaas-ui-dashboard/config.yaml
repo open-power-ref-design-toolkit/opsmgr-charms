@@ -1,0 +1,17 @@
+options:
+  openstack-origin:
+    default: distro
+    type: string
+    description: |
+      Repository to install from.
+  openstack-origin-git:
+    default: |
+      repositories:
+        - {name: dbaas-ui-dashboard,
+           repository: 'git://github.com/open-power-ref-design-toolkit/os-services.git',
+           branch: master}
+      release: master
+    type: string
+    description: |
+      OpenStack release name, or YAML dictionay listing
+      the git repositories the install should be done from.

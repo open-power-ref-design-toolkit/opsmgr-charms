@@ -1,0 +1,98 @@
+- name: Download filebeat amd64 deb file
+  get_url:
+    url: "{{ deb_download_path }}/{{ deb_package_amd64 }}"
+    dest: "{{ build_dir }}"
+    checksum: "{{ deb_download_checksum }}"
+  register: deb_filebeat_download
+  until: deb_filebeat_download | success
+  retries: 5
+  delay: 2
+  tags:
+    - install
+
+- name: Make deb_working_dir
+  file:
+    path: "{{ deb_working_dir }}"
+    state: directory
+  tags:
+    - install
+
+- name: Extract deb package
+  command: "dpkg-deb -R {{ deb_package_amd64 }} {{ deb_working_dir }}"
+  args:
+    chdir: "{{ build_dir }}"
+    creates: "{{ deb_binary_path }}"
+  tags:
+    - install
+
+- name: Copy filebeat into deb package
+  copy:
+    src: "{{ filebeat_dir}}/filebeat"
+    dest: "{{ deb_binary_path }}/filebeat"
+    remote_src: True
+    mode: 0755
+  tags:
+    - install
+
+- name: Copy filebeat-god into deb package
+  copy:
+    src: "{{ go_daemon_dir }}/god-linux-{{ ansible_architecture }}"
+    dest: "{{ deb_binary_path }}/filebeat-god"
+    remote_src: True
+    mode: 0755
+  tags:
+    - install
+
+- name: Edit control file to set architecture
+  lineinfile:
+    dest: "{{ deb_control_file }}"
+    regexp: '^Architecture'
+    line: 'Architecture: {{ deb_package_architecture }}'
+  tags:
+    - install
+
+- name: Store file stat of filebeat
+  stat:
+    path: "{{ deb_binary_path }}/filebeat"
+  register: filebeat_stat
+  tags:
+    - install
+
+- name: Update md5sum for filebeat
+  lineinfile:
+   dest: "{{ deb_md5sums_file }}"
+   regexp: 'usr/share/filebeat/bin/filebeat$'
+   line: '{{ filebeat_stat.stat.md5 }}  usr/share/filebeat/bin/filebeat'
+  tags:
+    - install
+
+- name: Store file stat of filebeat-god
+  stat:
+    path: "{{ deb_binary_path }}/filebeat-god"
+  register: filebeat_god_stat
+  tags:
+    - install
+
+- name: Update md5sum for filebeat-god
+  lineinfile:
+   dest: "{{ deb_md5sums_file }}"
+   regexp: 'usr/share/filebeat/bin/filebeat-god$'
+   line: '{{ filebeat_god_stat.stat.md5 }}  usr/share/filebeat/bin/filebeat-god'
+  tags:
+    - install
+
+- name: Repackage filebeat for the target platform deb file
+  command: "dpkg-deb -b {{ deb_working_dir }} {{ deb_package_target_platform }}"
+  args:
+    chdir: "{{ build_dir }}"
+    creates: "{{ build_dir }}/{{ deb_package_target_platform }}"
+  tags:
+    - install
+
+- name: Fetch the target platform deb package to the system running ansible
+  fetch:
+    src:  "{{ build_dir }}//{{ deb_package_target_platform }}"
+    dest:  "{{ package_path_host }}/"
+    flat: yes
+  tags:
+    - install

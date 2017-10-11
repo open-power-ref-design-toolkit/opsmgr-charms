@@ -1,0 +1,15 @@
+task build (type : Exec) {
+    print 'Building Ulysses OpsMgr JuJu Charms'
+    workingDir '.'
+    executable = "bash"; args = ["./make_all.sh"]
+    standardOutput = new ByteArrayOutputStream()
+    ext.output = {
+       return standardOutput.toString()
+    }
+}
+task test (type : Exec) {
+    print 'Running Make All test'
+}
+task do_all{
+  build.execute();
+}

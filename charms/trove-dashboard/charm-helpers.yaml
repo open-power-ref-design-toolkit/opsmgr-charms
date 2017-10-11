@@ -1,0 +1,11 @@
+destination: hooks/charmhelpers
+branch: lp:charm-helpers
+include:
+    - core
+    - osplatform
+    - fetch
+    - payload
+    - contrib.network|inc=*
+    - contrib.openstack|inc=*
+    - contrib.python|inc=*
+    - contrib.storage|inc=*

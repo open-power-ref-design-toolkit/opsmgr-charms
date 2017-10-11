@@ -1,0 +1,20 @@
+name: filebeat-config-horizon
+summary: Filebeat configurtion to Horizon logs
+description: |
+  To be installed where the filebeat subordinate charm is already installed.
+  This will configure filebeat to process specific logs depending on the
+  application running in the unit.
+tags:
+  - monitoring
+maintainers:
+  -  William Irons <wdirons@us.ibm.com>
+subordinate: True
+requires:
+  filebeat:
+    interface: filebeat-config
+    scope: container
+  general-info:
+    interface: juju-info
+    scope: container
+series:
+  - xenial

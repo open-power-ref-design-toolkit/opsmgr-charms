@@ -1,0 +1,20 @@
+- hosts: localhost
+  vars_files:
+    - /etc/ansible/host_vars/localhost
+  roles:
+    - elasticsearch
+
+  tasks:
+    - name: Start Elasticsearch
+      service:
+        name: elasticsearch
+        state: started
+      tags:
+        - start
+    - name: Stop & Disable Elasticsearch
+      service:
+        name: elasticsearch
+        state: stopped
+        enabled: no
+      tags:
+        - stop
