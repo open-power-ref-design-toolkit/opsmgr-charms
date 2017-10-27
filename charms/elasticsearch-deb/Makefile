@@ -25,10 +25,10 @@ test:
 
 scripts/charm_helpers_sync.py:
 	@mkdir scripts
-	@bzr cat lp:charm-helpers/tools/charm_helpers_sync/charm_helpers_sync.py \
-		> scripts/charm_helpers_sync.py
+	@wget --directory-prefix scripts \
+            https://raw.githubusercontent.com/juju/charm-helpers/master/tools/charm_helpers_sync/charm_helpers_sync.py
 
-sync-charm-helpers: scripts/charm_helpers_sync.py
+sync-charm-helpers: .venv/bin/python scripts/charm_helpers_sync.py
 	@echo "******** Syncing charm helpers ********"
 	@.venv/bin/python scripts/charm_helpers_sync.py -c charm-helpers.yaml
 
