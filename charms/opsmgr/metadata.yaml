@@ -1,5 +1,5 @@
 name: opsmgr
-summary: opsmgr command line and horizon dashboard
+summary: opsmgr command line and openstack horizon dashboard
 description: |
   opsmgr command line and horizon dashboard for inventory
   management of a cluster.
@@ -17,5 +17,5 @@ requires:
   dashboard-plugin:
     interface: dashboard-plugin
     scope: container
-  mysql:
-    interface: mysql
+  shared-db:
+    interface: mysql-shared

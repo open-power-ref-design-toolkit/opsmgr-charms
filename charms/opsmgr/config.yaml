@@ -22,3 +22,11 @@ options:
     description: |
       YAML dictionary listing the python packages
       that should be installed from the git repo
+  database-user:
+    type: string
+    default: opsmgr
+    description: Username to request database access.
+  database:
+    type: string
+    default: opsmgr
+    description: Database to request access.

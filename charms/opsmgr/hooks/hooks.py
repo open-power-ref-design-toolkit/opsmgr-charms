@@ -12,7 +12,9 @@ from charmhelpers.core.hookenv import (
     UnregisteredHookError,
     config,
     log as juju_log,
+    related_units,
     relation_get,
+    relation_set,
     status_set,
 )
 
@@ -31,6 +33,7 @@ from jinja2 import (
     FileSystemLoader
 )
 
+from charmhelpers.contrib.network.ip import get_relation_ip
 from charmhelpers.contrib.python.packages import pip_install
 from charmhelpers.core.host import service_restart
 from distutils.sysconfig import get_python_lib
@@ -74,7 +77,7 @@ def install():
     status_set('maintenance', 'Post-install')
     post_install()
 
-    status_set('maintenance', 'Missing relationship to mysql')
+    status_set('maintenance', 'Missing relationship to shared-db')
 
 
 def git_clone(config_yaml):
@@ -186,8 +189,25 @@ def get_random_passphrase():
     return passphrase
 
 
-@hooks.hook('mysql-relation-changed')
-def mysql_relation_changed():
+@hooks.hook('shared-db-relation-joined')
+def shared_db_relation_joined():
+
+    # Avoid churn check for access-network early
+    access_network = None
+    for unit in related_units():
+        access_network = relation_get(unit=unit, attribute='access-network')
+        if access_network:
+            break
+    host = get_relation_ip('shared-db', cidr_network=access_network)
+
+    conf = config()
+    relation_set(database=conf['database'],
+                 username=conf['database-user'],
+                 hostname=host)
+
+
+@hooks.hook('shared-db-relation-changed')
+def shared_db_relation_changed():
 
     status_set('maintenance', 'Configuring db')
 
@@ -195,10 +215,12 @@ def mysql_relation_changed():
     passphrase = get_random_passphrase()
 
     """ get the db connection info to use """
-    db_name = relation_get('database')
-    db_user = relation_get('user')
     db_pass = relation_get('password')
-    db_host = relation_get('host')
+    db_host = relation_get('db_host')
+
+    conf = config()
+    db_name = conf['database']
+    db_user = conf['database-user']
 
     """ Create the opsmg.conf file based on the template """
     context = {
